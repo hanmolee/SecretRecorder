@@ -1,15 +1,14 @@
 package hanmo.com.secretrecoder
 
-import android.content.Context
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Build
 import android.provider.Settings
 import android.content.Intent
 import android.net.Uri
-import android.widget.Toast
 import hanmo.com.secretrecoder.service.StartRecordButton
 import android.annotation.TargetApi
+import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
 
 
@@ -50,6 +49,7 @@ class MainActivity : AppCompatActivity() {
         if (requestCode == ACTION_MANAGE_OVERLAY_PERMISSION_REQUEST_CODE) {
             if (!Settings.canDrawOverlays(this)) {
                 // TODO 동의를 얻지 못했을 경우의 처리
+                Toast.makeText(applicationContext, "동의 안함", Toast.LENGTH_SHORT).show()
 
             } else {
                 startService(Intent(this@MainActivity, StartRecordButton::class.java))

@@ -52,7 +52,7 @@ class StartRecordButton : Service() {
                         or WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH,
                 PixelFormat.TRANSLUCENT)
 
-        params.gravity = Gravity.LEFT or Gravity.TOP
+        params.gravity = Gravity.RIGHT or Gravity.TOP
         mView = inflate.inflate(R.layout.view_overlay, null)
 
         mView.recordButton.clicks()
@@ -84,7 +84,7 @@ class StartRecordButton : Service() {
 
     }
 
-    
+
     override fun onDestroy() {
         super.onDestroy()
         compositeDisposable.clear()

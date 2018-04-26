@@ -6,10 +6,7 @@ import android.os.Bundle
 import android.os.Build
 import android.provider.Settings
 import android.content.Intent
-import android.net.Uri
 import hanmo.com.secretrecoder.service.StartRecordButton
-import android.annotation.TargetApi
-import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
 import android.content.pm.PackageManager
 import android.Manifest.permission.RECORD_AUDIO
@@ -29,8 +26,8 @@ class MainActivity : AppCompatActivity() {
 
         recoderSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
             if (isChecked) {
-                overalyCheckPermission()
                 recordCheckPermissions()
+                overalyCheckPermission()
             } else {
                 stopService(Intent(this@MainActivity, StartRecordButton::class.java))
             }
@@ -67,29 +64,26 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-
     private fun overalyCheckPermission(){
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) { // 마시멜로우 이상일 경우
             if (!Settings.canDrawOverlays(this)) {
-                val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                val permissionActivityIntent = Intent(this  , OverlayPermissionActivity::class.java)
+                permissionActivityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                startActivityForResult(permissionActivityIntent, 222)
+
+                /*val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
                         Uri.parse("package:$packageName"))
-                startActivityForResult(intent, ACTION_MANAGE_OVERLAY_PERMISSION_REQUEST_CODE)
+                startActivityForResult(intent, ACTION_MANAGE_OVERLAY_PERMISSION_REQUEST_CODE)*/
             }
         }
     }
 
-    @TargetApi(Build.VERSION_CODES.M)
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == ACTION_MANAGE_OVERLAY_PERMISSION_REQUEST_CODE) {
-            if (!Settings.canDrawOverlays(this)) {
-                // TODO 동의를 얻지 못했을 경우의 처리
-                Toast.makeText(applicationContext, "동의 안함", Toast.LENGTH_SHORT).show()
-
-            } else {
-                startService(Intent(this@MainActivity, StartRecordButton::class.java))
-            }
+        if (requestCode == 222) {
+            startService(Intent(this@MainActivity, StartRecordButton::class.java))
         }
     }
+
 }

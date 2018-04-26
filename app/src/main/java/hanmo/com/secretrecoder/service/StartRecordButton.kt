@@ -7,8 +7,6 @@ import android.content.Context
 import android.graphics.PixelFormat
 import android.view.*
 import hanmo.com.secretrecoder.R
-import android.widget.ImageButton
-import android.widget.TextView
 import android.view.Gravity
 import android.view.WindowManager
 import android.view.ViewGroup
@@ -18,6 +16,12 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.view_overlay.view.*
 import java.util.concurrent.TimeUnit
+import android.media.MediaRecorder
+import android.os.Environment
+import java.util.*
+import android.widget.Toast
+import java.io.IOException
+
 
 /**
  * Created by hanmo on 2018. 4. 24..
@@ -29,6 +33,11 @@ class StartRecordButton : Service() {
     private lateinit var compositeDisposable: CompositeDisposable
     private var recordStatus = false
 
+    private lateinit var AudioSavePathInDevice: String
+    private lateinit var mediaRecorder: MediaRecorder
+    private lateinit var random: Random
+    private var AudioFileName = "HANMO"
+
     override fun onBind(intent: Intent?): IBinder? {
         return null
     }
@@ -36,10 +45,19 @@ class StartRecordButton : Service() {
     override fun onCreate() {
         super.onCreate()
         compositeDisposable = CompositeDisposable()
+        setRecordReady()
+        setViewLayout()
         setRecordButton()
     }
 
-    private fun setRecordButton() {
+    private fun setRecordReady() {
+        random = Random()
+        AudioSavePathInDevice = Environment.getExternalStorageDirectory().absolutePath + "/" +
+                CreateRandomAudioFileName() + "AudioRecording.3gp"
+        MediaRecorderReady()
+    }
+
+    private fun setViewLayout() {
         val inflate = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         wm = getSystemService(Context.WINDOW_SERVICE) as WindowManager
 
@@ -55,6 +73,11 @@ class StartRecordButton : Service() {
         params.gravity = Gravity.RIGHT or Gravity.TOP
         mView = inflate.inflate(R.layout.view_overlay, null)
 
+        wm.addView(mView, params)
+    }
+
+    private fun setRecordButton() {
+
         mView.recordButton.clicks()
                 .debounce(300, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
@@ -64,24 +87,55 @@ class StartRecordButton : Service() {
                             //녹음중
                             recordStatus = false
                             mView.recordButton.setImageResource(R.drawable.ic_start_record)
+                            stopRecording()
                         }
                         false -> {
                             //녹음시작
                             recordStatus = true
                             mView.recordButton.setImageResource(R.drawable.ic_stop_record)
+                            startRecording()
                         }
                     }
                 }.apply { compositeDisposable.add(this) }
 
-        wm.addView(mView, params)
+    }
+
+    private fun MediaRecorderReady() {
+        mediaRecorder = MediaRecorder()
+        mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC)
+        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
+        mediaRecorder.setAudioEncoder(MediaRecorder.OutputFormat.AMR_NB)
+        mediaRecorder.setOutputFile(AudioSavePathInDevice)
+    }
+
+    private fun CreateRandomAudioFileName(): String {
+        val stringBuilder = StringBuilder()
+        stringBuilder.append(AudioFileName).append(System.currentTimeMillis())
+
+        return stringBuilder.toString()
     }
 
     private fun startRecording() {
+        try {
+            mediaRecorder.prepare()
+            mediaRecorder.start()
+        } catch (e: IllegalStateException) {
+            // TODO Auto-generated catch block
+            e.printStackTrace()
+        } catch (e: IOException) {
+            // TODO Auto-generated catch block
+            e.printStackTrace()
+        }
 
+        Toast.makeText(this, "Recording started",
+                Toast.LENGTH_LONG).show()
     }
 
     private fun stopRecording() {
+        mediaRecorder.stop()
 
+        Toast.makeText(this, "Recording Completed",
+                Toast.LENGTH_LONG).show()
     }
 
 

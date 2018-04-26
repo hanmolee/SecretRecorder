@@ -1,5 +1,6 @@
 package hanmo.com.secretrecoder
 
+import android.Manifest
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Build
@@ -12,9 +13,10 @@ import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
 import android.content.pm.PackageManager
 import android.Manifest.permission.RECORD_AUDIO
-import android.support.v4.content.ContextCompat
 import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
 import android.support.v4.app.ActivityCompat
+import android.util.Log
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -35,10 +37,15 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun recordCheckPermissions() : Boolean {
-        val writeStorageResult = ContextCompat.checkSelfPermission(applicationContext, WRITE_EXTERNAL_STORAGE)
-        val recordResult = ContextCompat.checkSelfPermission(applicationContext, RECORD_AUDIO)
-        return writeStorageResult == PackageManager.PERMISSION_GRANTED && recordResult == PackageManager.PERMISSION_GRANTED
+    fun recordCheckPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) !== PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.RECORD_AUDIO),
+                        RecordRequestPermissionCode)
+            } else {
+
+            }
+        }
     }
 
     //다시요청하는부분
@@ -47,34 +54,28 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        when(requestCode) {
+        when (requestCode) {
             RecordRequestPermissionCode -> {
-                if (grantResults.isNotEmpty()) {
-                    val StoragePermission = grantResults[0] == PackageManager.PERMISSION_GRANTED
-                    val RecordPermission = grantResults[1] == PackageManager.PERMISSION_GRANTED
-                    if (StoragePermission and RecordPermission) {
-                        //요청 수락
-                        Toast.makeText(applicationContext, "accepted", Toast.LENGTH_SHORT).show()
-                    } else {
-                        //요청 거절
-                        Toast.makeText(applicationContext, "denied", Toast.LENGTH_SHORT).show()
-                    }
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Log.e("Home", "Permission Granted")
+
+                } else {
+                    Log.e("Home", "Permission Failed")
+
                 }
             }
         }
-
     }
 
-    fun overalyCheckPermission(){
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {   // 마시멜로우 이상일 경우
-            if (!Settings.canDrawOverlays(this)) { // 체크
-                val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName"))
+
+    private fun overalyCheckPermission(){
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) { // 마시멜로우 이상일 경우
+            if (!Settings.canDrawOverlays(this)) {
+                val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                        Uri.parse("package:$packageName"))
                 startActivityForResult(intent, ACTION_MANAGE_OVERLAY_PERMISSION_REQUEST_CODE)
-            } else {
-                startService(Intent(this@MainActivity, StartRecordButton::class.java))
             }
-        } else {
-            startService(Intent(this@MainActivity, StartRecordButton::class.java))
         }
     }
 

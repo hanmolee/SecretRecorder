@@ -29,7 +29,7 @@ class OverlayPermissionActivity : AppCompatActivity() {
             123 -> if (Settings.canDrawOverlays(this)) {
                 finish()
             } else {
-                //
+                finish()
             }
         }
     }

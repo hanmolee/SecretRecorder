@@ -52,7 +52,7 @@ class MainActivity : AppCompatActivity() {
 
                     }
                     ResultCodes.PERMISSION_FAIL -> {
-                        
+
                     }
                 }
             }

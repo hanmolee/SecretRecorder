@@ -6,4 +6,5 @@
     <string name="overlay_permission">Permission to run the button on the screen</string>
     <string name="confirm">Confirm</string>
     <string name="denied">Denied</string>
+    <string name="showRecordList">RecordList</string>
 </resources>

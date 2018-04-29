@@ -21,6 +21,10 @@ import android.os.Environment
 import java.util.*
 import android.widget.Toast
 import java.io.IOException
+import android.view.GestureDetector
+import android.view.MotionEvent
+import android.view.View.OnTouchListener
+import io.reactivex.schedulers.Schedulers
 
 
 /**
@@ -45,7 +49,6 @@ class StartRecordButton : Service() {
     override fun onCreate() {
         super.onCreate()
         compositeDisposable = CompositeDisposable()
-        setRecordReady()
         setViewLayout()
         setRecordButton()
     }
@@ -54,7 +57,6 @@ class StartRecordButton : Service() {
         random = Random()
         AudioSavePathInDevice = Environment.getExternalStorageDirectory().absolutePath + "/" +
                 CreateRandomAudioFileName() + "AudioRecording.3gp"
-        MediaRecorderReady()
     }
 
     private fun setViewLayout() {
@@ -62,7 +64,7 @@ class StartRecordButton : Service() {
         wm = getSystemService(Context.WINDOW_SERVICE) as WindowManager
 
         val params = WindowManager.LayoutParams(
-                /*ViewGroup.LayoutParams.MATCH_PARENT*/300,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.TYPE_SYSTEM_ALERT,
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
@@ -77,9 +79,21 @@ class StartRecordButton : Service() {
     }
 
     private fun setRecordButton() {
+        mView.setOnTouchListener(object : GestureDetector.SimpleOnGestureListener(), OnTouchListener {
+            override fun onTouch(v: View?, event: MotionEvent?): Boolean {
+                return false
+            }
 
+            override fun onDoubleTap(e: MotionEvent?): Boolean {
+                Toast.makeText(applicationContext, "더블탭 !!", Toast.LENGTH_SHORT).show()
+                return super.onDoubleTap(e)
+            }
+
+        })
+
+        //더블탭 구현해야 함
         mView.recordButton.clicks()
-                .debounce(300, TimeUnit.MILLISECONDS)
+                .debounce(100, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
                     when(recordStatus) {
@@ -88,6 +102,7 @@ class StartRecordButton : Service() {
                             recordStatus = false
                             mView.recordButton.setImageResource(R.drawable.ic_start_record)
                             stopRecording()
+
                         }
                         false -> {
                             //녹음시작
@@ -106,6 +121,8 @@ class StartRecordButton : Service() {
         mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
         mediaRecorder.setAudioEncoder(MediaRecorder.OutputFormat.AMR_NB)
         mediaRecorder.setOutputFile(AudioSavePathInDevice)
+
+
     }
 
     private fun CreateRandomAudioFileName(): String {
@@ -116,6 +133,8 @@ class StartRecordButton : Service() {
     }
 
     private fun startRecording() {
+        setRecordReady()
+        MediaRecorderReady()
         try {
             mediaRecorder.prepare()
             mediaRecorder.start()
@@ -127,15 +146,12 @@ class StartRecordButton : Service() {
             e.printStackTrace()
         }
 
-        Toast.makeText(this, "Recording started",
-                Toast.LENGTH_LONG).show()
+        //Toast.makeText(this, "Recording started", Toast.LENGTH_LONG).show()
     }
 
     private fun stopRecording() {
         mediaRecorder.stop()
-
-        Toast.makeText(this, "Recording Completed",
-                Toast.LENGTH_LONG).show()
+        //Toast.makeText(this, "Recording Completed", Toast.LENGTH_LONG).show()
     }
 
 
@@ -144,4 +160,5 @@ class StartRecordButton : Service() {
         compositeDisposable.clear()
         wm.removeView(mView)
     }
+
 }

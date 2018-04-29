@@ -13,9 +13,11 @@ import android.provider.Settings
 import android.support.v4.app.ActivityCompat
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
+import android.widget.Toast
 import com.jakewharton.rxbinding2.view.clicks
+import hanmo.com.secretrecoder.constants.RequestCodes
+import hanmo.com.secretrecoder.constants.ResultCodes
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.dialog_permission.*
 
 /**
@@ -24,8 +26,6 @@ import kotlinx.android.synthetic.main.dialog_permission.*
 class OverlayPermissionActivity : AppCompatActivity() {
 
     private val compositeDisposable = CompositeDisposable()
-    private val RecordRequestPermissionCode = 2
-    private val REQ_CODE_OVERLAY_PERMISSION = 123
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,7 +54,7 @@ class OverlayPermissionActivity : AppCompatActivity() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) !== PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.RECORD_AUDIO),
-                        RecordRequestPermissionCode)
+                        RequestCodes.RecordRequestPermissionCode)
             } else {
 
             }
@@ -63,7 +63,7 @@ class OverlayPermissionActivity : AppCompatActivity() {
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         when (requestCode) {
-            RecordRequestPermissionCode -> {
+            RequestCodes.RecordRequestPermissionCode -> {
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     Log.e("Home", "Permission Granted")
                     startOverlayWindowService(this)
@@ -77,7 +77,7 @@ class OverlayPermissionActivity : AppCompatActivity() {
 
     //다시요청하는부분
     private fun requestPermission() {
-        ActivityCompat.requestPermissions(this@OverlayPermissionActivity, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.RECORD_AUDIO), RecordRequestPermissionCode)
+        ActivityCompat.requestPermissions(this@OverlayPermissionActivity, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.RECORD_AUDIO), RequestCodes.RecordRequestPermissionCode)
     }
 
     fun startOverlayWindowService(context: Context) {
@@ -85,7 +85,7 @@ class OverlayPermissionActivity : AppCompatActivity() {
             showObtainingPermissionOverlayWindow()
 
         } else {
-            setResult(Activity.RESULT_OK)
+            setResult(ResultCodes.PERMISSION_SUCCESS)
             finish()
         }
     }
@@ -93,7 +93,7 @@ class OverlayPermissionActivity : AppCompatActivity() {
     fun onOverlayResult(context: Context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (Settings.canDrawOverlays(context)) {
-                setResult(Activity.RESULT_OK)
+                setResult(ResultCodes.PERMISSION_SUCCESS)
                 finish()
             }
         }
@@ -102,18 +102,21 @@ class OverlayPermissionActivity : AppCompatActivity() {
     @TargetApi(Build.VERSION_CODES.M)
     fun showObtainingPermissionOverlayWindow() {
         val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName"))
-        startActivityForResult(intent, REQ_CODE_OVERLAY_PERMISSION)
+        startActivityForResult(intent, RequestCodes.REQ_CODE_OVERLAY_PERMISSION)
     }
 
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         when (requestCode) {
-            REQ_CODE_OVERLAY_PERMISSION -> onOverlayResult(this)
+            RequestCodes.REQ_CODE_OVERLAY_PERMISSION -> onOverlayResult(this)
 
-            else -> {
-            }
+            else -> { }
         }
         super.onActivityResult(requestCode, resultCode, data)
+    }
+
+    override fun onBackPressed() {
+
     }
 
 

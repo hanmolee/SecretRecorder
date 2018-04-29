@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">SecretRecoder</string>
+    <string name="permission_title">This is a required privilege to use the application.</string>
+    <string name="record_permission">Permission to run Sound Recorder</string>
+    <string name="write_permission">Permission to save recorded files</string>
+    <string name="overlay_permission">Permission to run the button on the screen</string>
+    <string name="confirm">Confirm</string>
+    <string name="denied">Denied</string>
 </resources>

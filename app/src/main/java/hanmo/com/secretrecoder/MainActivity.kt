@@ -19,13 +19,15 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         checkPermissionMyApp()
 
-        recoderSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
+        /*recoderSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
             if (isChecked) {
                 startService(Intent(this@MainActivity, StartRecordButton::class.java))
             } else {
                 stopService(Intent(this@MainActivity, StartRecordButton::class.java))
             }
-        }
+        }*/
+
+
     }
 
     private fun checkPermissionMyApp() {

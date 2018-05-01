@@ -1,15 +1,19 @@
 package hanmo.com.secretrecoder
 
 import android.Manifest
+import android.app.Activity
+import android.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.content.Intent
 import hanmo.com.secretrecoder.service.StartRecordButton
 import kotlinx.android.synthetic.main.activity_main.*
 import android.content.pm.PackageManager
+import android.support.annotation.IdRes
 import android.support.v4.content.ContextCompat
 import hanmo.com.secretrecoder.constants.RequestCodes
 import hanmo.com.secretrecoder.constants.ResultCodes
+import hanmo.com.secretrecoder.settings.SettingFragment
 
 
 class MainActivity : AppCompatActivity() {
@@ -19,15 +23,12 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         checkPermissionMyApp()
 
-        /*recoderSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
-            if (isChecked) {
-                startService(Intent(this@MainActivity, StartRecordButton::class.java))
-            } else {
-                stopService(Intent(this@MainActivity, StartRecordButton::class.java))
-            }
-        }*/
 
+        addContentFragment(R.id.contentFrame, SettingFragment())
+    }
 
+    fun Activity.addContentFragment(@IdRes frameId: Int, fragment: android.app.Fragment){
+        fragmentManager.beginTransaction().add(frameId, fragment).commit()
     }
 
     private fun checkPermissionMyApp() {

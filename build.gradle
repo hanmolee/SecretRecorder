@@ -7,6 +7,9 @@ buildscript {
     ext.RXANDROID_LIBRARY_VERSION = '2.0.2'
     ext.REALM_LIBRARY_VERSION = '5.0.0'
     ext.MOCKITO_LIBRARY_VERSION = '1.5.0'
+    ext.anko_version='0.10.3'
+    ext.RETROFIT_VERSION = '2.3.0'
+    ext.OKHTTP_VERSION = '3.9.1'
 
     repositories {
         google()

@@ -7,4 +7,5 @@
     <string name="confirm">Confirm</string>
     <string name="denied">Denied</string>
     <string name="showRecordList">RecordList</string>
+    <string name="searchHint">search..</string>
 </resources>

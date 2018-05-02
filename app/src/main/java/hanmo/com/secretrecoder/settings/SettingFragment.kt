@@ -12,6 +12,7 @@ import hanmo.com.secretrecoder.R
 import hanmo.com.secretrecoder.realm.RealmHelper
 import hanmo.com.secretrecoder.realm.model.UserPreference
 import hanmo.com.secretrecoder.service.StartRecordButton
+import hanmo.com.secretrecoder.util.DLog
 import kotlinx.android.synthetic.main.fragment_settings.view.*
 
 /**
@@ -40,6 +41,12 @@ class SettingFragment : Fragment() {
 
                 setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
                     override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                        val intent = Intent("TRANSPARENT")
+                        DLog.e("ddd $progress")
+                        DLog.e("sss $seekBar")
+                        intent.putExtra("tran", (progress / 100.0).toFloat())
+                        activity.sendBroadcast(intent)
+
                     }
 
                     override fun onStartTrackingTouch(seekBar: SeekBar?) {

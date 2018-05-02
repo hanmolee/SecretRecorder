@@ -1,9 +1,11 @@
 package hanmo.com.secretrecoder.service
 
 import android.app.Service
+import android.content.BroadcastReceiver
 import android.content.Intent
 import android.os.IBinder
 import android.content.Context
+import android.content.IntentFilter
 import android.graphics.PixelFormat
 import android.view.*
 import hanmo.com.secretrecoder.R
@@ -26,6 +28,7 @@ import android.view.MotionEvent
 import android.view.View.OnTouchListener
 import hanmo.com.secretrecoder.realm.RealmHelper
 import hanmo.com.secretrecoder.realm.model.UserPreference
+import hanmo.com.secretrecoder.util.DLog
 import io.reactivex.schedulers.Schedulers
 
 
@@ -44,6 +47,24 @@ class StartRecordButton : Service() {
     private lateinit var random: Random
     private var AudioFileName = "HANMO"
 
+    private val mTransparentReceiver = object : BroadcastReceiver() {
+
+        override fun onReceive(context: Context?, intent: Intent) {
+            context?.let {
+                val actionName = intent.action
+                DLog.e("ACION NAME : $actionName")
+                when(actionName) {
+                    "TRANSPARENT" -> {
+                        val ss = intent.getFloatExtra("tran", 0f)
+                        DLog.e(ss.toString())
+                        mView.alpha = ss
+                    }
+                    else -> {}
+                }
+            }
+        }
+    }
+
     override fun onBind(intent: Intent?): IBinder? {
         return null
     }
@@ -51,9 +72,16 @@ class StartRecordButton : Service() {
     override fun onCreate() {
         super.onCreate()
         compositeDisposable = CompositeDisposable()
+        setReceiver()
         setViewLayout()
         setRecordButton()
 
+    }
+
+    private fun setReceiver() {
+        val filter = IntentFilter()
+        filter.addAction("TRANSPARENT")
+        registerReceiver(mTransparentReceiver, filter)
     }
 
     private fun setRecordReady() {
@@ -181,6 +209,7 @@ class StartRecordButton : Service() {
     override fun onDestroy() {
         super.onDestroy()
         compositeDisposable.clear()
+        unregisterReceiver(mTransparentReceiver)
         wm.removeView(mView)
     }
 

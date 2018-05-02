@@ -12,4 +12,6 @@ open class UserPreference : RealmObject() {
     open var id : Int = 0
 
     open var hasRecord : Boolean? = null
+
+    open var hasOverlayLockscreen : Boolean? = null
 }

@@ -24,6 +24,8 @@ import java.io.IOException
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View.OnTouchListener
+import hanmo.com.secretrecoder.realm.RealmHelper
+import hanmo.com.secretrecoder.realm.model.UserPreference
 import io.reactivex.schedulers.Schedulers
 
 
@@ -63,7 +65,17 @@ class StartRecordButton : Service() {
         val inflate = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         wm = getSystemService(Context.WINDOW_SERVICE) as WindowManager
 
-        val params = WindowManager.LayoutParams(
+         val paramsHasLockscreen = WindowManager.LayoutParams(
+                 WindowManager.LayoutParams.WRAP_CONTENT,
+                 WindowManager.LayoutParams.WRAP_CONTENT,
+                 WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY,
+                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+                         or WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
+                         or WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+                         or WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH,
+                 PixelFormat.TRANSLUCENT)
+
+        val paramsHasNotLockscreen = WindowManager.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.TYPE_SYSTEM_ALERT,
@@ -72,16 +84,25 @@ class StartRecordButton : Service() {
                         or WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH,
                 PixelFormat.TRANSLUCENT)
 
-        params.gravity = Gravity.RIGHT or Gravity.TOP
         mView = inflate.inflate(R.layout.view_overlay, null)
 
-        wm.addView(mView, params)
+        val getUserPreference = RealmHelper.instance.queryFirst(UserPreference::class.java)
+        getUserPreference?.let {
+            if (it.hasOverlayLockscreen!!) {
+                paramsHasLockscreen.gravity = Gravity.RIGHT or Gravity.TOP
+                wm.addView(mView, paramsHasLockscreen)
+            } else {
+                paramsHasNotLockscreen.gravity = Gravity.RIGHT or Gravity.TOP
+                wm.addView(mView, paramsHasNotLockscreen)
+            }
+        }
     }
 
     private fun setRecordButton() {
         mView.setOnTouchListener(object : GestureDetector.SimpleOnGestureListener(), OnTouchListener {
             override fun onTouch(v: View?, event: MotionEvent?): Boolean {
-                return false
+                Toast.makeText(applicationContext, "터치함", Toast.LENGTH_SHORT).show()
+                return true
             }
 
             override fun onDoubleTap(e: MotionEvent?): Boolean {

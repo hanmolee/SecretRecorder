@@ -35,17 +35,24 @@ class RealmHelper {
         val userPreference = UserPreference()
         userPreference.id = 1
         userPreference.hasRecord = false
+        userPreference.hasOverlayLockscreen = false
 
         addData(userPreference)
     }
 
-    fun updatePreference(hasRecord : Boolean?) {
+    fun updatePreferenceHasRecord(hasRecord : Boolean?) {
         val UserPreference = realm.where(UserPreference::class.java).findFirst()
         realm.executeTransaction {
             UserPreference?.hasRecord = hasRecord
         }
     }
 
+    fun updatePreferenceHasOverlayLockscreen(hasOverlay : Boolean?) {
+        val UserPreference = realm.where(UserPreference::class.java).findFirst()
+        realm.executeTransaction {
+            UserPreference?.hasOverlayLockscreen = hasOverlay
+        }
+    }
 
     //Insert To Realm
     fun <T : RealmObject> addData(data: T) {

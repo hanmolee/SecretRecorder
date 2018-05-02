@@ -21,10 +21,10 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        val setting = SettingFragment()
+        addContentFragment(R.id.contentFrame, setting)
         checkPermissionMyApp()
 
-
-        addContentFragment(R.id.contentFrame, SettingFragment())
     }
 
     fun Activity.addContentFragment(@IdRes frameId: Int, fragment: android.app.Fragment){

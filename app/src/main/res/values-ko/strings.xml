@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="permission_title">어플을 사용하기 위해서 반드시 필요한 권한입니다.</string>
+    <string name="record_permission">Permission to run Sound Recorder</string>
+    <string name="write_permission">Permission to save recorded files</string>
+    <string name="overlay_permission">Permission to run the record button on the screen</string>
+    <string name="confirm">Confirm</string>
+    <string name="denied">Denied</string>
+    <string name="showRecordList">녹음 리스트 보기</string>
+    <string name="searchHint">search..</string>
+</resources>

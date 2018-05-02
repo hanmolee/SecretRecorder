@@ -36,6 +36,7 @@ class RealmHelper {
         userPreference.id = 1
         userPreference.hasRecord = false
         userPreference.hasOverlayLockscreen = false
+        userPreference.hasTransparent = 1.0f
 
         addData(userPreference)
     }

@@ -53,6 +53,7 @@ class StartRecordButton : Service() {
         compositeDisposable = CompositeDisposable()
         setViewLayout()
         setRecordButton()
+
     }
 
     private fun setRecordReady() {
@@ -68,7 +69,7 @@ class StartRecordButton : Service() {
          val paramsHasLockscreen = WindowManager.LayoutParams(
                  WindowManager.LayoutParams.WRAP_CONTENT,
                  WindowManager.LayoutParams.WRAP_CONTENT,
-                 WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY,
+                         WindowManager.LayoutParams.TYPE_TOAST,
                  WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
                          or WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
                          or WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
@@ -86,6 +87,7 @@ class StartRecordButton : Service() {
 
         mView = inflate.inflate(R.layout.view_overlay, null)
 
+
         val getUserPreference = RealmHelper.instance.queryFirst(UserPreference::class.java)
         getUserPreference?.let {
             if (it.hasOverlayLockscreen!!) {
@@ -99,7 +101,7 @@ class StartRecordButton : Service() {
     }
 
     private fun setRecordButton() {
-        mView.setOnTouchListener(object : GestureDetector.SimpleOnGestureListener(), OnTouchListener {
+        /*mView.setOnTouchListener(object : GestureDetector.SimpleOnGestureListener(), OnTouchListener {
             override fun onTouch(v: View?, event: MotionEvent?): Boolean {
                 Toast.makeText(applicationContext, "터치함", Toast.LENGTH_SHORT).show()
                 return true
@@ -110,7 +112,7 @@ class StartRecordButton : Service() {
                 return super.onDoubleTap(e)
             }
 
-        })
+        })*/
 
         //더블탭 구현해야 함
         mView.recordButton.clicks()

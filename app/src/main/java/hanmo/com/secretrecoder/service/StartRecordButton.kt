@@ -29,6 +29,7 @@ import android.view.View.OnTouchListener
 import hanmo.com.secretrecoder.realm.RealmHelper
 import hanmo.com.secretrecoder.realm.model.UserPreference
 import hanmo.com.secretrecoder.util.DLog
+import hanmo.com.secretrecoder.view.SwipeButton
 import io.reactivex.schedulers.Schedulers
 
 
@@ -39,6 +40,7 @@ class StartRecordButton : Service() {
 
     private lateinit var wm: WindowManager
     private lateinit var mView: View
+    private lateinit var mMenu: SwipeButton
     private lateinit var compositeDisposable: CompositeDisposable
     private var recordStatus = false
 
@@ -114,6 +116,7 @@ class StartRecordButton : Service() {
                 PixelFormat.TRANSLUCENT)
 
         mView = inflate.inflate(R.layout.view_overlay, null)
+        mMenu = SwipeButton(applicationContext)
 
 
         val getUserPreference = RealmHelper.instance.queryFirst(UserPreference::class.java)
@@ -121,9 +124,13 @@ class StartRecordButton : Service() {
             if (it.hasOverlayLockscreen!!) {
                 paramsHasLockscreen.gravity = Gravity.RIGHT or Gravity.TOP
                 wm.addView(mView, paramsHasLockscreen)
+                paramsHasLockscreen.gravity = Gravity.CENTER or Gravity.TOP
+                wm.addView(mMenu, paramsHasLockscreen)
             } else {
                 paramsHasNotLockscreen.gravity = Gravity.RIGHT or Gravity.TOP
                 wm.addView(mView, paramsHasNotLockscreen)
+                paramsHasNotLockscreen.gravity = Gravity.CENTER or Gravity.TOP
+                wm.addView(mMenu, paramsHasNotLockscreen)
             }
         }
     }
@@ -141,6 +148,18 @@ class StartRecordButton : Service() {
             }
 
         })*/
+
+        val SLIDE_OUT_DURATION = 333
+
+        mMenu.getProgressObservable().subscribe({ progress ->
+            //val translation = (progress * cardContainer.getWidth() / 50f).toInt()
+            //cardContainer.setPadding(translation, 0, -translation, 0)
+        })
+        mMenu.getCompleteObservable().subscribe({ aVoid ->
+            val activityHeight = mMenu.height
+            mMenu.animate().yBy(activityHeight - mMenu.y).duration = SLIDE_OUT_DURATION.toLong()
+            //cardContainer.animate().yBy(activityHeight - cardContainer.getY()).setDuration(SLIDE_OUT_DURATION.toLong())
+        })
 
         //더블탭 구현해야 함
         mView.recordButton.clicks()

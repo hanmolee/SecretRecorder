@@ -20,6 +20,7 @@ import kotlinx.android.synthetic.main.view_overlay.view.*
 import java.util.concurrent.TimeUnit
 import android.media.MediaRecorder
 import android.os.Environment
+import android.util.Log
 import java.util.*
 import android.widget.Toast
 import java.io.IOException
@@ -31,6 +32,7 @@ import hanmo.com.secretrecoder.realm.model.UserPreference
 import hanmo.com.secretrecoder.util.DLog
 import hanmo.com.secretrecoder.view.SwipeButton
 import io.reactivex.schedulers.Schedulers
+import org.jetbrains.anko.toast
 
 
 /**
@@ -154,9 +156,12 @@ class StartRecordButton : Service() {
         mMenu.getProgressObservable().subscribe({ progress ->
             //val translation = (progress * cardContainer.getWidth() / 50f).toInt()
             //cardContainer.setPadding(translation, 0, -translation, 0)
+            toast("progressing")
         })
-        mMenu.getCompleteObservable().subscribe({ aVoid ->
-            val activityHeight = mMenu.height
+        mMenu.getCompleteObservable().subscribe({ string ->
+            Log.e("finish", string)
+            toast("complete")
+            val activityHeight = 100
             mMenu.animate().yBy(activityHeight - mMenu.y).duration = SLIDE_OUT_DURATION.toLong()
             //cardContainer.animate().yBy(activityHeight - cardContainer.getY()).setDuration(SLIDE_OUT_DURATION.toLong())
         })
@@ -230,6 +235,7 @@ class StartRecordButton : Service() {
         compositeDisposable.clear()
         unregisterReceiver(mTransparentReceiver)
         wm.removeView(mView)
+        wm.removeView(mMenu)
     }
 
 }

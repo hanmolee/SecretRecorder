@@ -20,6 +20,7 @@ import kotlinx.android.synthetic.main.view_overlay.view.*
 import java.util.concurrent.TimeUnit
 import android.media.MediaRecorder
 import android.os.Environment
+import android.util.Log
 import java.util.*
 import android.widget.Toast
 import java.io.IOException
@@ -29,7 +30,9 @@ import android.view.View.OnTouchListener
 import hanmo.com.secretrecoder.realm.RealmHelper
 import hanmo.com.secretrecoder.realm.model.UserPreference
 import hanmo.com.secretrecoder.util.DLog
+import hanmo.com.secretrecoder.view.SwipeButton
 import io.reactivex.schedulers.Schedulers
+import org.jetbrains.anko.toast
 
 
 /**
@@ -39,6 +42,7 @@ class StartRecordButton : Service() {
 
     private lateinit var wm: WindowManager
     private lateinit var mView: View
+    private lateinit var mMenu: SwipeButton
     private lateinit var compositeDisposable: CompositeDisposable
     private var recordStatus = false
 
@@ -114,6 +118,7 @@ class StartRecordButton : Service() {
                 PixelFormat.TRANSLUCENT)
 
         mView = inflate.inflate(R.layout.view_overlay, null)
+        mMenu = SwipeButton(applicationContext)
 
 
         val getUserPreference = RealmHelper.instance.queryFirst(UserPreference::class.java)
@@ -121,9 +126,13 @@ class StartRecordButton : Service() {
             if (it.hasOverlayLockscreen!!) {
                 paramsHasLockscreen.gravity = Gravity.RIGHT or Gravity.TOP
                 wm.addView(mView, paramsHasLockscreen)
+                paramsHasLockscreen.gravity = Gravity.CENTER or Gravity.TOP
+                wm.addView(mMenu, paramsHasLockscreen)
             } else {
                 paramsHasNotLockscreen.gravity = Gravity.RIGHT or Gravity.TOP
                 wm.addView(mView, paramsHasNotLockscreen)
+                paramsHasNotLockscreen.gravity = Gravity.CENTER or Gravity.TOP
+                wm.addView(mMenu, paramsHasNotLockscreen)
             }
         }
     }
@@ -141,6 +150,21 @@ class StartRecordButton : Service() {
             }
 
         })*/
+
+        val SLIDE_OUT_DURATION = 333
+
+        mMenu.getProgressObservable().subscribe({ progress ->
+            //val translation = (progress * cardContainer.getWidth() / 50f).toInt()
+            //cardContainer.setPadding(translation, 0, -translation, 0)
+            toast("progressing")
+        })
+        mMenu.getCompleteObservable().subscribe({ string ->
+            Log.e("finish", string)
+            toast("complete")
+            val activityHeight = 100
+            mMenu.animate().yBy(activityHeight - mMenu.y).duration = SLIDE_OUT_DURATION.toLong()
+            //cardContainer.animate().yBy(activityHeight - cardContainer.getY()).setDuration(SLIDE_OUT_DURATION.toLong())
+        })
 
         //더블탭 구현해야 함
         mView.recordButton.clicks()
@@ -211,6 +235,7 @@ class StartRecordButton : Service() {
         compositeDisposable.clear()
         unregisterReceiver(mTransparentReceiver)
         wm.removeView(mView)
+        wm.removeView(mMenu)
     }
 
 }

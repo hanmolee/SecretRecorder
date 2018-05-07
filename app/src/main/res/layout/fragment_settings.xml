@@ -71,7 +71,7 @@
         app:layout_constraintTop_toBottomOf="@+id/buttonSwitchLayout" />
 
     <RelativeLayout
-        android:id="@+id/buttonTransformLayout"
+        android:id="@+id/buttontransparentLayout"
         android:layout_width="match_parent"
         android:layout_height="40dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -84,7 +84,7 @@
             android:layout_alignParentLeft="true"
             android:layout_centerInParent="true"
             android:layout_marginLeft="10dp"
-            android:text="@string/transform"
+            android:text="@string/transparent"
             android:textColor="#000000"
             android:textSize="15sp" />
 
@@ -106,7 +106,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonTransformLayout" />
+        app:layout_constraintTop_toBottomOf="@+id/buttontransparentLayout" />
 
     <RelativeLayout
         android:id="@+id/buttonLockscreenLayout"
@@ -114,7 +114,7 @@
         android:layout_height="40dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonTransformLayout">
+        app:layout_constraintTop_toBottomOf="@+id/buttontransparentLayout">
 
         <TextView
             android:layout_width="wrap_content"

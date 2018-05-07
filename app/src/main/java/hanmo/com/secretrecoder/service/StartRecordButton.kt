@@ -126,12 +126,12 @@ class StartRecordButton : Service() {
             if (it.hasOverlayLockscreen!!) {
                 paramsHasLockscreen.gravity = Gravity.RIGHT or Gravity.TOP
                 wm.addView(mView, paramsHasLockscreen)
-                paramsHasLockscreen.gravity = Gravity.CENTER or Gravity.TOP
+                paramsHasLockscreen.gravity = Gravity.CENTER or Gravity.RIGHT
                 wm.addView(mMenu, paramsHasLockscreen)
             } else {
                 paramsHasNotLockscreen.gravity = Gravity.RIGHT or Gravity.TOP
                 wm.addView(mView, paramsHasNotLockscreen)
-                paramsHasNotLockscreen.gravity = Gravity.CENTER or Gravity.TOP
+                paramsHasNotLockscreen.gravity = Gravity.CENTER or Gravity.RIGHT
                 wm.addView(mMenu, paramsHasNotLockscreen)
             }
         }

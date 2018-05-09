@@ -3,25 +3,14 @@ package hanmo.com.secretrecoder.view
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.ValueAnimator
-import android.annotation.TargetApi
 import android.content.Context
-import android.os.Build
 import android.support.animation.FlingAnimation
 import android.support.animation.FloatValueHolder
-import android.support.annotation.AttrRes
-import android.support.annotation.Nullable
-import android.support.annotation.StyleRes
-import android.support.constraint.ConstraintLayout
-import android.support.v7.widget.AppCompatImageView
-import android.util.AttributeSet
-import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
-import android.widget.FrameLayout
 import android.widget.RelativeLayout
-import android.widget.TextView
 import hanmo.com.secretrecoder.R
 import hanmo.com.secretrecoder.util.DLog
 import io.reactivex.Observable
@@ -69,22 +58,25 @@ class SwipeButton : RelativeLayout {
             }
 
             override fun onScroll(motionEvent: MotionEvent, motionEvent1: MotionEvent, v: Float, v1: Float): Boolean {
-                DLog.e("hanmo onScroll ! motionEvent : $motionEvent motionEvent1 : $motionEvent1 ")
+                //DLog.e("hanmo onScroll ! motionEvent : $motionEvent motionEvent1 : $motionEvent1 ")
                 cancelAnimations()
+                //DLog.e("hahahaahah  스크롤 : ${motionEvent1.x}")
                 setDragProgress(motionEvent1.x)
+
                 return true
             }
 
             override fun onFling(downEvent: MotionEvent, moveEvent: MotionEvent, velocityX: Float, velocityY: Float): Boolean {
-                DLog.e("hanmo onFling ! downEvnet : $downEvent moveEvent : $moveEvent velocitiyX : $velocityX")
+                //DLog.e("hanmo onFling ! downEvnet : $downEvent moveEvent : $moveEvent velocitiyX : $velocityX")
 
                 if (velocityX < 0) {
                     return false
                 }
+
                 cancelAnimations()
                 flingAnimation = FlingAnimation(FloatValueHolder(moveEvent.x))
                 flingAnimation!!.setStartVelocity(velocityX)
-                        .setMaxValue(buttonBackground.width.toFloat())
+                        .setMaxValue(width.toFloat())
                         .setFriction(FLING_FRICTION)
                         .addUpdateListener { dynamicAnimation, `val`, velocity -> setDragProgress(`val`) }
                         .addEndListener { dynamicAnimation, canceled, `val`, velocity -> onDragFinished(`val`) }
@@ -115,22 +107,28 @@ class SwipeButton : RelativeLayout {
     }
 
     private fun setDragProgress(x: Float) {
-        progressSubject.onNext(x / buttonBackground.width)
+        progressSubject.onNext(x / width)
         val translation = calculateTranslation(x)
-        setPadding(-translation, 0, +translation, 0)
+        DLog.e("프로그레스 x : $x")
+        DLog.e("프로그레스 width : $width")
+        DLog.e("프로그레스 translation : $translation")
+        setPadding(translation, 0, -translation, 0)
         if (!triggered) {
-            overlayView.alpha = -(x / buttonBackground.width)
-            overlayView.layoutParams.width = -(Math.min(x - buttonBackground.x - translation.toFloat(), -overlayView.width.toFloat()).toInt())
-            DLog.e("hanmo x : $x")
-            DLog.e("hanmo width : ${Math.min(x - overlayView.x - translation.toFloat(), buttonBackground.width.toFloat()).toInt()}")
+            overlayView.alpha = -(x / width)
+            overlayView.layoutParams.width = Math.min(x + overlayView.x + translation.toFloat(), buttonBackground.width.toFloat()).toInt()
             overlayView.requestLayout()
+
+            buttonBackground.alpha = 1 - overlayView.alpha
 
         } else {
             overlayView.alpha = 1f
             overlayView.layoutParams.width = buttonBackground.width
             overlayView.requestLayout()
 
+            buttonBackground.alpha = 0f
+
         }
+
     }
 
     private fun calculateTranslation(x: Float): Int {
@@ -147,7 +145,7 @@ class SwipeButton : RelativeLayout {
     }
 
     private fun onDragFinished(finalX: Float) {
-        DLog.e("hanmo onDragFinished : finalX $finalX  >  THRESHOLD : ${THRESHOLD_FRACTION * buttonBackground.width}")
+        //DLog.e("hanmo onDragFinished : finalX $finalX  >  THRESHOLD : ${THRESHOLD_FRACTION * buttonBackground.width}")
         if (-finalX > THRESHOLD_FRACTION * buttonBackground.width) {
             animateToEnd(finalX)
         } else {
@@ -156,9 +154,10 @@ class SwipeButton : RelativeLayout {
     }
 
     private fun animateToStart() {
+        //DLog.e("START!!!!!!!!!!!!!!!!!!")
         cancelAnimations()
         animator = ValueAnimator.ofFloat(overlayView.width.toFloat(), 0f)
-        animator!!.addUpdateListener { valueAnimator -> setDragProgress(valueAnimator.animatedValue as Float) }
+        animator!!.addUpdateListener { valueAnimator -> setDragProgress(valueAnimator.animatedValue as Float)}
         animator!!.duration = ANIMATE_TO_START_DURATION.toLong()
         animator!!.addListener(object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(animation: Animator) {
@@ -171,11 +170,12 @@ class SwipeButton : RelativeLayout {
     }
 
     private fun animateToEnd(currentValue: Float) {
+        //DLog.e("END!!!!!!!!!!!!!!!!!!!!")
         cancelAnimations()
         var rightEdge = buttonBackground.width + buttonBackground.x
         rightEdge += calculateTranslation(rightEdge).toFloat()
-        animator = ValueAnimator.ofFloat(currentValue, rightEdge)
-        animator!!.addUpdateListener { valueAnimator -> setDragProgress(valueAnimator.animatedValue as Float) }
+        animator = ValueAnimator.ofFloat(-currentValue, rightEdge)
+        animator!!.addUpdateListener { valueAnimator -> setDragProgress(valueAnimator.animatedValue as Float)}
         animator!!.addListener(object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(animation: Animator) {
                 triggered = true

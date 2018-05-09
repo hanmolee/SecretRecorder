@@ -156,13 +156,13 @@ class StartRecordButton : Service() {
         mMenu.getProgressObservable().subscribe({ progress ->
             //val translation = (progress * cardContainer.getWidth() / 50f).toInt()
             //cardContainer.setPadding(translation, 0, -translation, 0)
-            toast("progressing")
+            //toast("progressing")
         })
         mMenu.getCompleteObservable().subscribe({ string ->
-            Log.e("finish", string)
-            toast("complete")
-            val activityHeight = 100
-            mMenu.animate().yBy(activityHeight - mMenu.y).duration = SLIDE_OUT_DURATION.toLong()
+            //Log.e("finish", string)
+            //toast("complete")
+            //val activityHeight = 100
+            //mMenu.animate().yBy(activityHeight - mMenu.y).duration = SLIDE_OUT_DURATION.toLong()
             //cardContainer.animate().yBy(activityHeight - cardContainer.getY()).setDuration(SLIDE_OUT_DURATION.toLong())
         })
 

@@ -26,6 +26,8 @@
 
         <activity android:name=".OverlayPermissionActivity" />
 
+        <activity android:name=".settings.SettingActivity" />
+
         <service
             android:name=".service.StartRecordButton"
             android:enabled="true"

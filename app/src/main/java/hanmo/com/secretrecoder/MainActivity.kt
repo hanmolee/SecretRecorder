@@ -2,18 +2,15 @@ package hanmo.com.secretrecoder
 
 import android.Manifest
 import android.app.Activity
-import android.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.content.Intent
-import hanmo.com.secretrecoder.service.StartRecordButton
-import kotlinx.android.synthetic.main.activity_main.*
 import android.content.pm.PackageManager
 import android.support.annotation.IdRes
 import android.support.v4.content.ContextCompat
 import hanmo.com.secretrecoder.constants.RequestCodes
 import hanmo.com.secretrecoder.constants.ResultCodes
-import hanmo.com.secretrecoder.settings.SettingFragment
+import hanmo.com.secretrecoder.settings.SettingActivity
 
 
 class MainActivity : AppCompatActivity() {
@@ -21,9 +18,15 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        val setting = SettingFragment()
-        addContentFragment(R.id.contentFrame, setting)
+
         checkPermissionMyApp()
+
+        val settingIntent = SettingActivity.newIntent(applicationContext)
+        //settingIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        startActivity(settingIntent)
+
+        /*val setting = SettingActivity()
+        addContentFragment(R.id.contentFrame, setting)*/
 
     }
 

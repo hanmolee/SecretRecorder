@@ -1,41 +1,47 @@
 package hanmo.com.secretrecoder.settings
 
-import android.app.Fragment
+import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.support.v7.app.AppCompatActivity
 import android.widget.SeekBar
 import hanmo.com.secretrecoder.R
 import hanmo.com.secretrecoder.realm.RealmHelper
 import hanmo.com.secretrecoder.realm.model.UserPreference
 import hanmo.com.secretrecoder.service.StartRecordButton
 import hanmo.com.secretrecoder.util.DLog
-import kotlinx.android.synthetic.main.fragment_settings.view.*
+import kotlinx.android.synthetic.main.fragment_settings.*
 
 /**
  * Created by hanmo on 2018. 5. 1..
  */
-class SettingFragment : Fragment() {
+class SettingActivity : AppCompatActivity() {
 
+    companion object {
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val rootView = inflater.inflate(R.layout.fragment_settings, container, false)
-        val userPreference = RealmHelper.instance.queryFirst(UserPreference::class.java)
-
-        setRecordSwitch(rootView, userPreference)
-        setOverlaySwitch(rootView, userPreference)
-        setTransparent(rootView, userPreference)
-
-        return rootView
+        fun newIntent(context: Context) : Intent {
+            val intent = Intent(context, SettingActivity::class.java)
+            return intent
+        }
     }
 
-    private fun setTransparent(rootView: View, userPreference: UserPreference?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        this.overridePendingTransition(R.anim.slide_in_right, 0)
+        setContentView(R.layout.fragment_settings)
+
+        val userPreference = RealmHelper.instance.queryFirst(UserPreference::class.java)
+
+        setRecordSwitch(userPreference)
+        setOverlaySwitch(userPreference)
+        setTransparent(userPreference)
+
+    }
+
+    private fun setTransparent(userPreference: UserPreference?) {
 
         userPreference?.let {
-            with(rootView.transparentSeekbar) {
+            with(transparentSeekbar) {
 
                 progress = (it.hasTransparent!! * 100).toInt()
 
@@ -45,7 +51,7 @@ class SettingFragment : Fragment() {
                         DLog.e("ddd $progress")
                         DLog.e("sss $seekBar")
                         intent.putExtra("tran", (progress / 100.0).toFloat())
-                        activity.sendBroadcast(intent)
+                        sendBroadcast(intent)
 
                     }
 
@@ -62,34 +68,39 @@ class SettingFragment : Fragment() {
         }
     }
 
-    private fun setOverlaySwitch(rootView: View, userPreference: UserPreference?) {
+    private fun setOverlaySwitch(userPreference: UserPreference?) {
 
         userPreference?.let {
-            with(rootView.lockscreenSwitch) {
+            with(lockscreenSwitch) {
                 isChecked = it.hasOverlayLockscreen!!
                 setOnCheckedChangeListener { buttonView, isChecked ->
                     RealmHelper.instance.updatePreferenceHasOverlayLockscreen(isChecked)
-                    activity.stopService(Intent(activity, StartRecordButton::class.java))
-                    activity.startService(Intent(activity, StartRecordButton::class.java))
+                    stopService(Intent(this@SettingActivity, StartRecordButton::class.java))
+                    startService(Intent(this@SettingActivity, StartRecordButton::class.java))
                 }
             }
         }
     }
 
-    private fun setRecordSwitch(rootView: View, userPreference: UserPreference?) {
+    private fun setRecordSwitch(userPreference: UserPreference?) {
 
         userPreference?.let {
-            with(rootView.recoderSwitch) {
+            with(recoderSwitch) {
                 isChecked = it.hasRecord!!
                 setOnCheckedChangeListener { buttonView, isChecked ->
                     RealmHelper.instance.updatePreferenceHasRecord(isChecked)
                     if (isChecked) {
-                        activity.startService(Intent(activity, StartRecordButton::class.java))
+                        startService(Intent(this@SettingActivity, StartRecordButton::class.java))
                     } else {
-                        activity.stopService(Intent(activity, StartRecordButton::class.java))
+                        stopService(Intent(this@SettingActivity, StartRecordButton::class.java))
                     }
                 }
             }
         }
+    }
+
+    override fun finish() {
+        super.finish()
+        this.overridePendingTransition(0, R.anim.slide_out_right)
     }
 }

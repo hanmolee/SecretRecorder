@@ -29,6 +29,7 @@ import android.view.MotionEvent
 import android.view.View.OnTouchListener
 import hanmo.com.secretrecoder.realm.RealmHelper
 import hanmo.com.secretrecoder.realm.model.UserPreference
+import hanmo.com.secretrecoder.settings.SettingActivity
 import hanmo.com.secretrecoder.util.DLog
 import hanmo.com.secretrecoder.view.SwipeButton
 import io.reactivex.schedulers.Schedulers
@@ -159,11 +160,10 @@ class StartRecordButton : Service() {
             //toast("progressing")
         })
         mMenu.getCompleteObservable().subscribe({ string ->
-            //Log.e("finish", string)
-            //toast("complete")
-            //val activityHeight = 100
-            //mMenu.animate().yBy(activityHeight - mMenu.y).duration = SLIDE_OUT_DURATION.toLong()
-            //cardContainer.animate().yBy(activityHeight - cardContainer.getY()).setDuration(SLIDE_OUT_DURATION.toLong())
+            val settingIntent = SettingActivity.newIntent(applicationContext)
+            settingIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            startActivity(settingIntent)
+
         })
 
         //더블탭 구현해야 함

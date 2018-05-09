@@ -152,18 +152,12 @@ class StartRecordButton : Service() {
 
         })*/
 
-        val SLIDE_OUT_DURATION = 333
 
-        mMenu.getProgressObservable().subscribe({ progress ->
-            //val translation = (progress * cardContainer.getWidth() / 50f).toInt()
-            //cardContainer.setPadding(translation, 0, -translation, 0)
-            //toast("progressing")
-        })
+        mMenu.getProgressObservable().subscribe({ progress -> })
         mMenu.getCompleteObservable().subscribe({ string ->
             val settingIntent = SettingActivity.newIntent(applicationContext)
             settingIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
             startActivity(settingIntent)
-
         })
 
         //더블탭 구현해야 함

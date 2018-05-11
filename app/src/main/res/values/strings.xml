@@ -9,7 +9,8 @@
     <string name="showRecordList">RecordList</string>
     <string name="searchHint">search..</string>
     <string name="settings">Setting</string>
-    <string name="buttonSwitch">Button Switch</string>
+    <string name="RecordButtonSwitch">Record Button Switch</string>
     <string name="transparent">Transparent</string>
     <string name="lockscreen">Overlay Lockscreen</string>
+    <string name="SettingButtonSwitch">Settings Button Switch</string>
 </resources>

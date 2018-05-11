@@ -21,10 +21,6 @@ class MainActivity : AppCompatActivity() {
 
         checkPermissionMyApp()
 
-        val settingIntent = SettingActivity.newIntent(applicationContext)
-        //settingIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-        startActivity(settingIntent)
-
         /*val setting = SettingActivity()
         addContentFragment(R.id.contentFrame, setting)*/
 
@@ -55,6 +51,9 @@ class MainActivity : AppCompatActivity() {
             RequestCodes.REQ_PERMISSION -> {
                 when(resultCode) {
                     ResultCodes.PERMISSION_SUCCESS -> {
+
+                        val settingIntent = SettingActivity.newIntent(applicationContext)
+                        startActivity(settingIntent)
 
                     }
                     ResultCodes.PERMISSION_FAIL -> {

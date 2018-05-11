@@ -43,7 +43,6 @@ class StartRecordButton : Service() {
 
     private lateinit var wm: WindowManager
     private lateinit var mView: View
-    private lateinit var mMenu: SwipeButton
     private lateinit var compositeDisposable: CompositeDisposable
     private var recordStatus = false
 
@@ -60,9 +59,9 @@ class StartRecordButton : Service() {
                 DLog.e("ACION NAME : $actionName")
                 when(actionName) {
                     "TRANSPARENT" -> {
-                        val ss = intent.getFloatExtra("tran", 0f)
-                        DLog.e(ss.toString())
-                        mView.alpha = ss
+                        val alphaValue = intent.getFloatExtra("tran", 0f)
+                        DLog.e(alphaValue.toString())
+                        mView.alpha = alphaValue
                     }
                     else -> {}
                 }
@@ -119,21 +118,15 @@ class StartRecordButton : Service() {
                 PixelFormat.TRANSLUCENT)
 
         mView = inflate.inflate(R.layout.view_overlay, null)
-        mMenu = SwipeButton(applicationContext)
-
 
         val getUserPreference = RealmHelper.instance.queryFirst(UserPreference::class.java)
         getUserPreference?.let {
             if (it.hasOverlayLockscreen!!) {
                 paramsHasLockscreen.gravity = Gravity.RIGHT or Gravity.TOP
                 wm.addView(mView, paramsHasLockscreen)
-                paramsHasLockscreen.gravity = Gravity.CENTER or Gravity.RIGHT
-                wm.addView(mMenu, paramsHasLockscreen)
             } else {
                 paramsHasNotLockscreen.gravity = Gravity.RIGHT or Gravity.TOP
                 wm.addView(mView, paramsHasNotLockscreen)
-                paramsHasNotLockscreen.gravity = Gravity.CENTER or Gravity.RIGHT
-                wm.addView(mMenu, paramsHasNotLockscreen)
             }
         }
     }
@@ -151,14 +144,6 @@ class StartRecordButton : Service() {
             }
 
         })*/
-
-
-        mMenu.getProgressObservable().subscribe({ progress -> })
-        mMenu.getCompleteObservable().subscribe({ string ->
-            val settingIntent = SettingActivity.newIntent(applicationContext)
-            settingIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-            startActivity(settingIntent)
-        })
 
         //더블탭 구현해야 함
         mView.recordButton.clicks()
@@ -229,7 +214,6 @@ class StartRecordButton : Service() {
         compositeDisposable.clear()
         unregisterReceiver(mTransparentReceiver)
         wm.removeView(mView)
-        wm.removeView(mMenu)
     }
 
 }

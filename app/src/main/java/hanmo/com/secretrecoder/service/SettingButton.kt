@@ -34,15 +34,6 @@ class SettingButton : Service() {
         setSwipeComplete()
     }
 
-    private fun setSwipeComplete() {
-        mMenu.getProgressObservable().subscribe({ progress -> })
-        mMenu.getCompleteObservable().subscribe({ string ->
-            val settingIntent = SettingActivity.newIntent(applicationContext)
-            settingIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-            startActivity(settingIntent)
-        })
-    }
-
     private fun setViewLayout() {
         //val inflate = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         wm = getSystemService(Context.WINDOW_SERVICE) as WindowManager
@@ -80,6 +71,16 @@ class SettingButton : Service() {
             }
         }
     }
+
+    private fun setSwipeComplete() {
+        mMenu.getProgressObservable().subscribe({ progress -> })
+        mMenu.getCompleteObservable().subscribe({ string ->
+            val settingIntent = SettingActivity.newIntent(applicationContext)
+            settingIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            startActivity(settingIntent)
+        })
+    }
+
 
     override fun onDestroy() {
         super.onDestroy()

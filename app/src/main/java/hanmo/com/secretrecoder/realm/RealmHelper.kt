@@ -36,6 +36,7 @@ class RealmHelper {
         userPreference.id = 1
         userPreference.hasRecord = false
         userPreference.hasOverlayLockscreen = false
+        userPreference.hasSetting = false
         userPreference.hasTransparent = 1.0f
 
         addData(userPreference)
@@ -52,6 +53,13 @@ class RealmHelper {
         val UserPreference = realm.where(UserPreference::class.java).findFirst()
         realm.executeTransaction {
             UserPreference?.hasOverlayLockscreen = hasOverlay
+        }
+    }
+
+    fun updatePreferenceHasSetting(hasSetting : Boolean?) {
+        val UserPreference = realm.where(UserPreference::class.java).findFirst()
+        realm.executeTransaction {
+            UserPreference?.hasSetting = hasSetting
         }
     }
 

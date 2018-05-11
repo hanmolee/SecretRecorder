@@ -8,6 +8,7 @@ import android.widget.SeekBar
 import hanmo.com.secretrecoder.R
 import hanmo.com.secretrecoder.realm.RealmHelper
 import hanmo.com.secretrecoder.realm.model.UserPreference
+import hanmo.com.secretrecoder.service.SettingButton
 import hanmo.com.secretrecoder.service.StartRecordButton
 import hanmo.com.secretrecoder.util.DLog
 import kotlinx.android.synthetic.main.fragment_settings.*
@@ -35,6 +36,7 @@ class SettingActivity : AppCompatActivity() {
         setRecordSwitch(userPreference)
         setOverlaySwitch(userPreference)
         setTransparent(userPreference)
+        setSettingSwitch(userPreference)
 
     }
 
@@ -77,6 +79,8 @@ class SettingActivity : AppCompatActivity() {
                     RealmHelper.instance.updatePreferenceHasOverlayLockscreen(isChecked)
                     stopService(Intent(this@SettingActivity, StartRecordButton::class.java))
                     startService(Intent(this@SettingActivity, StartRecordButton::class.java))
+                    stopService(Intent(this@SettingActivity, SettingButton::class.java))
+                    startService(Intent(this@SettingActivity, SettingButton::class.java))
                 }
             }
         }
@@ -93,6 +97,22 @@ class SettingActivity : AppCompatActivity() {
                         startService(Intent(this@SettingActivity, StartRecordButton::class.java))
                     } else {
                         stopService(Intent(this@SettingActivity, StartRecordButton::class.java))
+                    }
+                }
+            }
+        }
+    }
+
+    private fun setSettingSwitch(userPreference: UserPreference?) {
+        userPreference?.let {
+            with(settingSwitch) {
+                isChecked = it.hasSetting!!
+                setOnCheckedChangeListener { buttonView, isChecked ->
+                    RealmHelper.instance.updatePreferenceHasSetting(isChecked)
+                    if (isChecked) {
+                        startService(Intent(this@SettingActivity, SettingButton::class.java))
+                    } else {
+                        stopService(Intent(this@SettingActivity, SettingButton::class.java))
                     }
                 }
             }

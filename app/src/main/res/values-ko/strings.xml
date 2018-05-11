@@ -9,7 +9,8 @@
     <string name="showRecordList">녹음 리스트 보기</string>
     <string name="searchHint">search..</string>
     <string name="settings">Setting</string>
-    <string name="buttonSwitch">Button Switch</string>
+    <string name="RecordButtonSwitch">Button Switch</string>
     <string name="transparent">Transform</string>
     <string name="lockscreen">Overlay Lockscreen</string>
+    <string name="SettingButtonSwitch">Settings Button Switch</string>
 </resources>

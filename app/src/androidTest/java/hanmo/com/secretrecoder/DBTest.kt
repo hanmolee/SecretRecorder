@@ -74,7 +74,6 @@ class DBTest {
             assertEquals(1, it.id)
             assertEquals(true, it.hasRecord)
         }
-
     }
 
     @After

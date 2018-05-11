@@ -41,7 +41,8 @@ class MainActivity : AppCompatActivity() {
 
             startActivityForResult(Intent(this@MainActivity, OverlayPermissionActivity::class.java), RequestCodes.REQ_PERMISSION)
         } else {
-            // 권한 있음
+            val settingIntent = SettingActivity.newIntent(applicationContext)
+            startActivity(settingIntent)
         }
     }
 

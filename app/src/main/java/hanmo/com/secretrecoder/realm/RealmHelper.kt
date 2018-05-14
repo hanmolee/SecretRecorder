@@ -56,6 +56,13 @@ class RealmHelper {
         }
     }
 
+    fun updatePreferenceTransparent(transparent : Int?) {
+        val UserPreference = realm.where(UserPreference::class.java).findFirst()
+        realm.executeTransaction {
+            UserPreference?.hasTransparent = transparent?.toFloat()
+        }
+    }
+
     fun updatePreferenceHasSetting(hasSetting : Boolean?) {
         val UserPreference = realm.where(UserPreference::class.java).findFirst()
         realm.executeTransaction {

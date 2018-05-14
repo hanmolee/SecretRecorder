@@ -45,7 +45,7 @@ class SettingActivity : AppCompatActivity() {
         userPreference?.let {
             with(transparentSeekbar) {
 
-                progress = (it.hasTransparent!! * 100).toInt()
+                progress = it.hasTransparent?.toInt()!!
 
                 setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
                     override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
@@ -62,6 +62,7 @@ class SettingActivity : AppCompatActivity() {
                     }
 
                     override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                        RealmHelper.instance.updatePreferenceTransparent(seekBar?.progress)
 
                     }
 

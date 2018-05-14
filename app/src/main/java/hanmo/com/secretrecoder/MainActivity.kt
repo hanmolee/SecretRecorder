@@ -10,6 +10,9 @@ import android.support.annotation.IdRes
 import android.support.v4.content.ContextCompat
 import hanmo.com.secretrecoder.constants.RequestCodes
 import hanmo.com.secretrecoder.constants.ResultCodes
+import hanmo.com.secretrecoder.realm.RealmHelper
+import hanmo.com.secretrecoder.realm.model.UserPreference
+import hanmo.com.secretrecoder.service.StartRecordButton
 import hanmo.com.secretrecoder.settings.SettingActivity
 
 
@@ -20,9 +23,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         checkPermissionMyApp()
-
-        /*val setting = SettingActivity()
-        addContentFragment(R.id.contentFrame, setting)*/
 
     }
 
@@ -41,8 +41,28 @@ class MainActivity : AppCompatActivity() {
 
             startActivityForResult(Intent(this@MainActivity, OverlayPermissionActivity::class.java), RequestCodes.REQ_PERMISSION)
         } else {
+
+            initData()
+
             val settingIntent = SettingActivity.newIntent(applicationContext)
             startActivity(settingIntent)
+        }
+    }
+
+    private fun initData() {
+        val userPreference = RealmHelper.instance.queryFirst(UserPreference::class.java)
+        userPreference?.let {
+            if (it.hasRecord!!) {
+
+            }
+
+            if (it.hasSetting!!) {
+
+            }
+
+            if (it.hasOverlayLockscreen!!) {
+
+            }
         }
     }
 

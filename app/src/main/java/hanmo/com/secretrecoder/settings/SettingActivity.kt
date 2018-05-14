@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity
 import android.widget.SeekBar
 import com.jakewharton.rxbinding2.view.clicks
 import hanmo.com.secretrecoder.R
+import hanmo.com.secretrecoder.constants.Const
 import hanmo.com.secretrecoder.realm.RealmHelper
 import hanmo.com.secretrecoder.realm.model.UserPreference
 import hanmo.com.secretrecoder.service.SettingButton
@@ -50,7 +51,12 @@ class SettingActivity : AppCompatActivity() {
     private fun setFinishSetting() {
         settingMenu.clicks()
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { finish() }
+                .subscribe {
+                    val intent = Intent(Const.MENU_FINISH)
+                    sendBroadcast(intent)
+
+                    finish()
+                }
                 .apply { compositeDisposable.add(this) }
 
     }

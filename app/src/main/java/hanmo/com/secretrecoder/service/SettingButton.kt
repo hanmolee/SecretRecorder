@@ -1,8 +1,10 @@
 package hanmo.com.secretrecoder.service
 
 import android.app.Service
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.graphics.PixelFormat
 import android.os.IBinder
 import android.view.Gravity
@@ -10,9 +12,11 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.view.WindowManager
 import hanmo.com.secretrecoder.R
+import hanmo.com.secretrecoder.constants.Const
 import hanmo.com.secretrecoder.realm.RealmHelper
 import hanmo.com.secretrecoder.realm.model.UserPreference
 import hanmo.com.secretrecoder.settings.SettingActivity
+import hanmo.com.secretrecoder.util.DLog
 import hanmo.com.secretrecoder.view.SwipeButton
 import io.reactivex.disposables.CompositeDisposable
 
@@ -24,15 +28,38 @@ class SettingButton : Service() {
     private lateinit var wm: WindowManager
     private lateinit var mMenu: SwipeButton
 
+    private val mFinished = object : BroadcastReceiver() {
+
+        override fun onReceive(context: Context?, intent: Intent) {
+            context?.let {
+                val actionName = intent.action
+                when(actionName) {
+                    Const.MENU_FINISH -> {
+                        setViewLayout()
+                    }
+                    else -> {}
+                }
+            }
+        }
+    }
+
     override fun onBind(intent: Intent?): IBinder {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun onCreate() {
         super.onCreate()
+        setReceiver()
         setViewLayout()
         setSwipeComplete()
     }
+
+    private fun setReceiver() {
+        val filter = IntentFilter()
+        filter.addAction(Const.MENU_FINISH)
+        registerReceiver(mFinished, filter)
+    }
+
 
     private fun setViewLayout() {
         //val inflate = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
@@ -84,6 +111,7 @@ class SettingButton : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
+        unregisterReceiver(mFinished)
         wm.removeView(mMenu)
     }
 }

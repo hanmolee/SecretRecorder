@@ -29,7 +29,7 @@ class SettingActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         this.overridePendingTransition(R.anim.slide_in_right, 0)
-        setContentView(R.layout.fragment_settings)
+        setContentView(R.layout.activity_settings)
 
         val userPreference = RealmHelper.instance.queryFirst(UserPreference::class.java)
 

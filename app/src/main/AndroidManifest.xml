@@ -29,7 +29,8 @@
 
         <activity android:name=".OverlayPermissionActivity" />
 
-        <activity android:name=".settings.SettingActivity" />
+        <activity android:name=".settings.SettingActivity"
+            android:theme="@style/Theme.Transparent"/>
 
         <service
             android:name=".service.StartRecordButton"

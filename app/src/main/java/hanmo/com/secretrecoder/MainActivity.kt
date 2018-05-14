@@ -14,6 +14,8 @@ import hanmo.com.secretrecoder.realm.RealmHelper
 import hanmo.com.secretrecoder.realm.model.UserPreference
 import hanmo.com.secretrecoder.service.StartRecordButton
 import hanmo.com.secretrecoder.settings.SettingActivity
+import hanmo.com.secretrecoder.settings.SettingFragment
+import kotlinx.android.synthetic.main.activity_main.*
 
 
 class MainActivity : AppCompatActivity() {
@@ -44,8 +46,9 @@ class MainActivity : AppCompatActivity() {
 
             initData()
 
-            val settingIntent = SettingActivity.newIntent(applicationContext)
-            startActivity(settingIntent)
+            addContentFragment(R.id.contentFrame, SettingFragment())
+            //val settingIntent = SettingActivity.newIntent(applicationContext)
+            //startActivity(settingIntent)
         }
     }
 
@@ -73,8 +76,9 @@ class MainActivity : AppCompatActivity() {
                 when(resultCode) {
                     ResultCodes.PERMISSION_SUCCESS -> {
 
-                        val settingIntent = SettingActivity.newIntent(applicationContext)
-                        startActivity(settingIntent)
+                        addContentFragment(R.id.contentFrame, SettingFragment())
+                        //val settingIntent = SettingActivity.newIntent(applicationContext)
+                        //startActivity(settingIntent)
 
                     }
                     ResultCodes.PERMISSION_FAIL -> {

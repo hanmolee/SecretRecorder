@@ -5,18 +5,23 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.widget.SeekBar
+import com.jakewharton.rxbinding2.view.clicks
 import hanmo.com.secretrecoder.R
 import hanmo.com.secretrecoder.realm.RealmHelper
 import hanmo.com.secretrecoder.realm.model.UserPreference
 import hanmo.com.secretrecoder.service.SettingButton
 import hanmo.com.secretrecoder.service.StartRecordButton
 import hanmo.com.secretrecoder.util.DLog
-import kotlinx.android.synthetic.main.fragment_settings.*
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import kotlinx.android.synthetic.main.activity_settings.*
 
 /**
  * Created by hanmo on 2018. 5. 1..
  */
 class SettingActivity : AppCompatActivity() {
+
+    private lateinit var compositeDisposable: CompositeDisposable
 
     companion object {
 
@@ -30,6 +35,7 @@ class SettingActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         this.overridePendingTransition(R.anim.slide_in_right, 0)
         setContentView(R.layout.activity_settings)
+        compositeDisposable = CompositeDisposable()
 
         val userPreference = RealmHelper.instance.queryFirst(UserPreference::class.java)
 
@@ -37,6 +43,15 @@ class SettingActivity : AppCompatActivity() {
         setOverlaySwitch(userPreference)
         setTransparent(userPreference)
         setSettingSwitch(userPreference)
+        setFinishSetting()
+
+    }
+
+    private fun setFinishSetting() {
+        settingMenu.clicks()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe { finish() }
+                .apply { compositeDisposable.add(this) }
 
     }
 
@@ -118,6 +133,11 @@ class SettingActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    override fun onDestroy() {
+        compositeDisposable.clear()
+        super.onDestroy()
     }
 
     override fun finish() {

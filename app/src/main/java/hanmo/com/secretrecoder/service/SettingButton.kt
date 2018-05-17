@@ -35,6 +35,7 @@ class SettingButton : Service() {
                 val actionName = intent.action
                 when(actionName) {
                     Const.MENU_FINISH -> {
+                        wm.removeView(mMenu)
                         setViewLayout()
                     }
                     else -> {}
